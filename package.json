@@ -1,0 +1,58 @@
+{
+  "name": "flexible-mui-table-library",
+  "private": false,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "lint:fix": "eslint --fix 'src/**/*.{jsx,ts,tsx}'",
+    "format": "prettier --write src//**/*.{ts,tsx,css} --config ./.prettierrc"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/flexible-mui-table-library.es.js",
+      "require": "./dist/flexible-mui-table-library.umd.js"
+    },
+    "./dist/style.css": "./dist/style.css"
+  },
+  "main": "./dist/flexible-mui-table-library.umd.js",
+  "module": "./dist/flexible-mui-table-library.es.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {},
+  "peerDependencies": {
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.7",
+    "@mui/styled-engine-sc": "^5.11.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^5.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.19",
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/parser": "^5.50.0",
+    "@vitejs/plugin-react": "^3.1.0",
+    "eslint": "^8.33.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "prettier": "^2.8.3",
+    "react-hooks": "^1.0.1",
+    "typescript": "^4.9.3",
+    "vite": "^4.1.0",
+    "vite-plugin-dts": "^1.7.2",
+    "vite-plugin-linter": "^2.0.2",
+    "vite-tsconfig-paths": "^4.0.5"
+  },
+  "license": "MIT"
+}
