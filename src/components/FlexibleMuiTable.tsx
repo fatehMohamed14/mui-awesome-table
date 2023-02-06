@@ -27,17 +27,14 @@ export interface TableProps<T> {
   isCollapsible?: boolean
   actions?: Action<T>[]
 }
-
-export const FlexibleMuiTable = <T,>({
-  items,
-  headCells,
-  actions,
-  isCollapsible = false,
-}: PropsWithChildren<TableProps<T>>) => {
-  const [order, setOrder] = useState<Order>('desc')
-  const [orderBy, setOrderBy] = useState<keyof T>('createdAt' as keyof T)
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(25)
+function Row<T>(props: {
+  row: T
+  isCollapsible: boolean
+  headCells: HeadCell<T>[]
+  index: number
+  actions?: Action<T>[]
+}) {
+  const { row, isCollapsible, headCells, actions, index } = props
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const [currentTarget, setCurrenttarget] = useState<T>()
@@ -50,6 +47,138 @@ export const FlexibleMuiTable = <T,>({
     setAnchorEl(null)
     setCurrenttarget(undefined)
   }
+
+  return (
+    <React.Fragment>
+      <TableRow hover role="checkbox" tabIndex={-1}>
+        {isCollapsible && (
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+            >
+              {isCollapsed ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+        )}
+        {headCells
+          .filter((h) => !h.showOnCollapse)
+          .map((h) => {
+            return (
+              <TableCell key={h.id as string} align="left">
+                {h.render(row[h.id])}
+              </TableCell>
+            )
+          })}
+        {actions && (
+          <TableCell align="right" key={`action-${index}`}>
+            <IconButton
+              onClick={(event) => handleClick(event, row)}
+              size="medium"
+              sx={{ ml: 2 }}
+              aria-controls={open ? 'account-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              id={`user-menu-btn-${index}`}
+            >
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              id={`user-menu-${index}`}
+              open={open}
+              onClose={handleClose}
+              onClick={handleClose}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: 'visible',
+                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                  mt: 1.5,
+                  '& .MuiAvatar-root': {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  '&:before': {
+                    content: '""',
+                    display: 'block',
+                    position: 'absolute',
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: 'background.paper',
+                    transform: 'translateY(-50%) rotate(45deg)',
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              {actions.map((a) => a.render(currentTarget || row))}
+            </Menu>
+          </TableCell>
+        )}
+      </TableRow>
+      {isCollapsible && (
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+            <Collapse in={isCollapsed} timeout="auto" unmountOnExit>
+              <Box
+                sx={{
+                  margin: 1,
+                  padding: 1,
+                  bgcolor: 'grey.100',
+                  borderRadius: '5px',
+                }}
+              >
+                <Typography variant="h6" gutterBottom component="div">
+                  More information
+                </Typography>
+                <Grid container spacing={1}>
+                  {headCells
+                    .filter((h) => h.showOnCollapse)
+                    .map((h) => {
+                      return (
+                        <Grid item xs={12} key={`collapse-grid-${index}-${String(h.id)}`}>
+                          <Typography
+                            variant="subtitle2"
+                            component="span"
+                            sx={{ display: 'inline' }}
+                            mx={2}
+                          >
+                            {h.label}
+                          </Typography>
+                          <Typography variant="body1" component="span">
+                            {h.render(row[h.id])}
+                          </Typography>
+                        </Grid>
+                      )
+                    })}
+                </Grid>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      )}
+    </React.Fragment>
+  )
+}
+
+export const FlexibleMuiTable = <T,>({
+  items,
+  headCells,
+  actions,
+  isCollapsible = false,
+}: PropsWithChildren<TableProps<T>>) => {
+  const [order, setOrder] = useState<Order>('desc')
+  const [orderBy, setOrderBy] = useState<keyof T>('createdAt' as keyof T)
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(25)
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - items.length) : 0
 
@@ -79,127 +208,16 @@ export const FlexibleMuiTable = <T,>({
             hasActions={!!actions}
           />
           <TableBody>
-            {items.map((row, index) => {
-              return (
-                <React.Fragment key={index}>
-                  <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                    {isCollapsible && (
-                      <TableCell>
-                        <IconButton
-                          aria-label="expand row"
-                          size="small"
-                          onClick={() => setIsCollapsed(!isCollapsed)}
-                        >
-                          {isCollapsed ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                        </IconButton>
-                      </TableCell>
-                    )}
-                    {headCells
-                      .filter((h) => !h.showOnCollapse)
-                      .map((h) => {
-                        return (
-                          <TableCell key={h.id as string} align="left">
-                            {h.render(row[h.id])}
-                          </TableCell>
-                        )
-                      })}
-                    {actions && (
-                      <TableCell align="right" key={`action-${index}`}>
-                        <IconButton
-                          onClick={(event) => handleClick(event, row)}
-                          size="medium"
-                          sx={{ ml: 2 }}
-                          aria-controls={open ? 'account-menu' : undefined}
-                          aria-haspopup="true"
-                          aria-expanded={open ? 'true' : undefined}
-                          id={`user-menu-btn-${index}`}
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          anchorEl={anchorEl}
-                          id={`user-menu-${index}`}
-                          open={open}
-                          onClose={handleClose}
-                          onClick={handleClose}
-                          PaperProps={{
-                            elevation: 0,
-                            sx: {
-                              overflow: 'visible',
-                              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                              mt: 1.5,
-                              '& .MuiAvatar-root': {
-                                width: 32,
-                                height: 32,
-                                ml: -0.5,
-                                mr: 1,
-                              },
-                              '&:before': {
-                                content: '""',
-                                display: 'block',
-                                position: 'absolute',
-                                top: 0,
-                                right: 14,
-                                width: 10,
-                                height: 10,
-                                bgcolor: 'background.paper',
-                                transform: 'translateY(-50%) rotate(45deg)',
-                                zIndex: 0,
-                              },
-                            },
-                          }}
-                          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                        >
-                          {actions.map((a) => a.render(currentTarget || row))}
-                        </Menu>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                  {isCollapsible && (
-                    <TableRow>
-                      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
-                        <Collapse in={isCollapsed} timeout="auto" unmountOnExit>
-                          <Box
-                            sx={{
-                              margin: 1,
-                              padding: 1,
-                              bgcolor: 'grey.100',
-                              borderRadius: '5px',
-                            }}
-                          >
-                            <Typography variant="h6" gutterBottom component="div">
-                              More information
-                            </Typography>
-                            <Grid container spacing={1}>
-                              {headCells
-                                .filter((h) => h.showOnCollapse)
-                                .map((h) => {
-                                  return (
-                                    <Grid item xs={12} key={`collapse-grid-${index}`}>
-                                      <Typography
-                                        variant="subtitle2"
-                                        component="span"
-                                        sx={{ display: 'inline' }}
-                                        mx={2}
-                                      >
-                                        {h.label}
-                                      </Typography>
-                                      <Typography variant="body1" component="span">
-                                        {h.render(row[h.id])}
-                                      </Typography>
-                                    </Grid>
-                                  )
-                                })}
-                            </Grid>
-                          </Box>
-                        </Collapse>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </React.Fragment>
-              )
-            })}
+            {items.map((row, index) => (
+              <Row
+                key={index}
+                row={row}
+                index={index}
+                headCells={headCells}
+                isCollapsible={isCollapsible}
+                actions={actions}
+              />
+            ))}
             {emptyRows > 0 && (
               <TableRow
                 style={{
