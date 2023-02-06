@@ -5,6 +5,7 @@ on:
       - closed
     branches:
       - main
+permissions: read-all
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -21,3 +22,4 @@ jobs:
           WITH_V: true
           DEFAULT_BRANCH: main
           RELEASE_BRANCHES: main
+          INITIAL_VERSION: 1.0.0
