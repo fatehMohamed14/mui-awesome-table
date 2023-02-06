@@ -5,7 +5,6 @@ on:
       - closed
     branches:
       - main
-permissions: read-all
 jobs:
   build:
     runs-on: ubuntu-22.04
