@@ -19,14 +19,8 @@ import {
 import React, { PropsWithChildren, useState } from 'react'
 
 import { EnhancedTableHead } from './EnhancedTableHead'
-import { Action, HeadCell, Order } from './tableTypes'
+import { Action, HeadCell, Order, TableProps } from './tableTypes'
 
-export interface TableProps<T> {
-  items: T[]
-  headCells: HeadCell<T>[]
-  isCollapsible?: boolean
-  actions?: Action<T>[]
-}
 function Row<T>(props: {
   row: T
   isCollapsible: boolean
@@ -174,25 +168,30 @@ export const FlexibleMuiTable = <T,>({
   headCells,
   actions,
   isCollapsible = false,
+  onSort,
+  onPageChanged,
+  onRowsPerPageChanged,
+  pagination,
 }: PropsWithChildren<TableProps<T>>) => {
   const [order, setOrder] = useState<Order>('desc')
   const [orderBy, setOrderBy] = useState<keyof T>('createdAt' as keyof T)
-  const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(25)
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - items.length) : 0
+  const emptyRows =
+    pagination && pagination?.page > 0
+      ? Math.max(0, (1 + pagination?.page) * pagination?.rowsPerPage - pagination?.count)
+      : 0
 
-  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof T) => {
+  const handleSortRequest = (event: React.MouseEvent<unknown>, property: keyof T) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
+    onSort?.(property, isAsc ? 'desc' : 'asc')
   }
   const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage)
+    onPageChanged?.(newPage)
   }
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
+    onRowsPerPageChanged?.(parseInt(event.target.value, 10))
   }
 
   return (
@@ -202,7 +201,7 @@ export const FlexibleMuiTable = <T,>({
           <EnhancedTableHead
             order={order}
             orderBy={orderBy as string}
-            onRequestSort={handleRequestSort}
+            onRequestSort={handleSortRequest}
             headCells={headCells}
             isCollapsible={isCollapsible}
             hasActions={!!actions}
@@ -230,15 +229,17 @@ export const FlexibleMuiTable = <T,>({
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={items.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      {pagination && (
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 20, 30]}
+          component="div"
+          count={pagination.count}
+          rowsPerPage={pagination.rowsPerPage}
+          page={pagination.page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      )}
     </Paper>
   )
 }

@@ -23,6 +23,14 @@
   "main": "./dist/flexible-mui-table-library.umd.js",
   "module": "./dist/flexible-mui-table-library.es.js",
   "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.7",
+    "@mui/styled-engine-sc": "^5.11.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^5.3.6"
+  },
   "peerDependencies": {
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.7",
