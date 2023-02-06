@@ -18,13 +18,11 @@
     ".": {
       "import": "./dist/flexible-mui-table-library.es.js",
       "require": "./dist/flexible-mui-table-library.umd.js"
-    },
-    "./dist/style.css": "./dist/style.css"
+    }
   },
   "main": "./dist/flexible-mui-table-library.umd.js",
   "module": "./dist/flexible-mui-table-library.es.js",
   "types": "./dist/index.d.ts",
-  "dependencies": {},
   "peerDependencies": {
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.7",
@@ -54,5 +52,26 @@
     "vite-plugin-linter": "^2.0.2",
     "vite-tsconfig-paths": "^4.0.5"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fatehMohamed14/flexibleMuiTable"
+  },
+  "keywords": [
+    "mui",
+    "react",
+    "material",
+    "react mui",
+    "material ui",
+    "table",
+    "material table",
+    "generic",
+    "customizable",
+    "pagination"
+  ],
+  "author": "fateh mohamed",
+  "bugs": {
+    "url": "https://github.com/fatehMohamed14/flexibleMuiTable/issues"
+  },
+  "homepage": "https://github.com/fatehMohamed14/flexibleMuiTable#readme",
   "license": "MIT"
 }
