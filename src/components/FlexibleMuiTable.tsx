@@ -19,7 +19,7 @@ import {
 import React, { PropsWithChildren, useState } from 'react'
 
 import { EnhancedTableHead } from './EnhancedTableHead'
-import { Action, HeadCell, Order, TableProps } from './tableTypes'
+import { Action, HeadCell, Order, FlexibleTableprops } from './tableTypes'
 
 function Row<T>(props: {
   row: T
@@ -167,15 +167,14 @@ export const FlexibleMuiTable = <T,>({
   items,
   headCells,
   actions,
-  isCollapsible = false,
   onSort,
   onPageChanged,
   onRowsPerPageChanged,
   pagination,
-}: PropsWithChildren<TableProps<T>>) => {
+}: PropsWithChildren<FlexibleTableprops<T>>) => {
   const [order, setOrder] = useState<Order>('desc')
   const [orderBy, setOrderBy] = useState<keyof T>('createdAt' as keyof T)
-
+  const isCollapsible = headCells.some((e) => e?.showOnCollapse)
   const emptyRows =
     pagination && pagination?.page > 0
       ? Math.max(0, (1 + pagination?.page) * pagination?.rowsPerPage - pagination?.count)

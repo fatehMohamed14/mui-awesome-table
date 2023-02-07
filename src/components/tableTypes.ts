@@ -5,10 +5,9 @@ export interface Pagination {
   rowsPerPage: number
   count: number
 }
-export interface TableProps<T> {
+export interface FlexibleTableprops<T> {
   items: T[]
   headCells: HeadCell<T>[]
-  isCollapsible?: boolean
   actions?: Action<T>[]
   pagination?: Pagination
   onSort?: (sortBy: keyof T, sortOrder: Order) => void

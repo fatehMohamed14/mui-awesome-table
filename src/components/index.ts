@@ -6,5 +6,5 @@ export type {
   HeadCell,
   Order,
   Pagination,
-  TableProps,
+  FlexibleTableprops,
 } from './tableTypes'

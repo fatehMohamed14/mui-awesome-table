@@ -1,5 +1,5 @@
 {
-  "name": "flexible-mui-table-library",
+  "name": "flexible-mui-table",
   "private": false,
   "version": "1.0.0",
   "type": "module",
@@ -16,12 +16,12 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/flexible-mui-table-library.es.js",
-      "require": "./dist/flexible-mui-table-library.umd.js"
+      "import": "./dist/flexible-mui-table.es.js",
+      "require": "./dist/flexible-mui-table.umd.js"
     }
   },
-  "main": "./dist/flexible-mui-table-library.umd.js",
-  "module": "./dist/flexible-mui-table-library.es.js",
+  "main": "./dist/flexible-mui-table.umd.js",
+  "module": "./dist/flexible-mui-table.es.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@mui/icons-material": "^5.11.0",

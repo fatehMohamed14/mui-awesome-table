@@ -25,7 +25,7 @@ export default defineConfig((configEnv) => ({
       entry: resolve('src', 'components/index.ts'),
       name: 'FlexibleMuiTableLibrary',
       formats: ['es', 'umd'],
-      fileName: (format) => `flexible-mui-table-library.${format}.js`,
+      fileName: (format) => `flexible-mui-table.${format}.js`,
     },
     rollupOptions: {
       external: [...Object.keys(packageJson.peerDependencies)],
