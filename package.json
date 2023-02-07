@@ -65,16 +65,19 @@
     "url": "https://github.com/fatehMohamed14/flexibleMuiTable"
   },
   "keywords": [
-    "mui",
     "react",
+    "react-component",
+    "mui",
+    "material-ui",
+    "material design",
     "material",
-    "react mui",
-    "material ui",
     "table",
     "material table",
     "generic",
     "customizable",
-    "pagination"
+    "pagination",
+    "component"
+   
   ],
   "author": "fateh mohamed",
   "bugs": {
