@@ -5,7 +5,7 @@ export interface Pagination {
   rowsPerPage: number
   count: number
 }
-export interface FlexibleTableprops<T> {
+export interface FlexibleTableProps<T> {
   items: T[]
   headCells: HeadCell<T>[]
   actions?: Action<T>[]

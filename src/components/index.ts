@@ -3,8 +3,8 @@ export { FlexibleMuiTable } from './FlexibleMuiTable'
 export type {
   Action,
   EnhancedTableProps,
+  FlexibleTableProps,
   HeadCell,
   Order,
   Pagination,
-  FlexibleTableprops,
 } from './tableTypes'
