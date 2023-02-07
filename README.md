@@ -1,4 +1,3 @@
-
 # flexibleMuiTable
 
 Full customizable generic MUI table React component
@@ -8,7 +7,7 @@ Full customizable generic MUI table React component
 - Respect of **Open/Closed principles** with a full extensibility
     1. Add of pagination on demand
     2. Add of row actions on demand
-    3. Add of collapse feature to show more details on demand
+    3. Add collapse feature to show more details on demand
     4. Smart cells building by passing a render method. Example: *use a chip component for a specific cell*  
 - Support of  **Sorting**, **Pagination**, **Collapsible Table**
 - Generic component that allows to pass your data type into your component making it reusable, strongly typed and clean. For instance if you wanna use it for TODO list, here is the clean way
@@ -22,13 +21,27 @@ Full customizable generic MUI table React component
    <FlexibleMuiTable<TODO>  ...props />
    ```
 
-## 🍴 How to use it ?
+## 🍴 How to use it?
 ### Installation
 `npm install flexible-mui-table`
 Or
 `yarn add flexible-mui-table`
 
-After installation done, lets starts by the props (props and callback props).
+After installation done, let's start by the props (props and callback props).
+FlexibleMuiTable flow chart:
+
+```mermaid
+%%{init: {'theme': 'forest', "flowchart" : { "curve" : "basis" } } }%%
+graph LR
+A{Parent component} -- Items -->B((FlexibleMuiTable))
+A{Parent component} -- HeadCells --> B((FlexibleMuiTable))
+A{Parent component} -- Actions --> B((FlexibleMuiTable))
+A{Parent component} -- Pagination --> B((FlexibleMuiTable))
+B -- onSort Event --> A
+B -- onPageChanged Event --> A
+B -- onRowsPerPageChanged Event --> A
+```
+
 Here is the props type of our magic component
 ```typescript
 export interface FlexibleTableProps<T> {
@@ -48,8 +61,8 @@ export interface FlexibleTableProps<T> {
 Items property  is the data array of type T[]
 
 #### headCells (required)
-HeadCells is an easy and complete way  to define your table head cells their ids, labels, and how to render each cell using a render method that return a **ReactNode**.
-If you need to Enable Collapse features on your  table, you have to set showOnCollapse to true on  at least one element of todoCells bellow.
+HeadCells is an easy and complete way  to define your table head cells, their ids, labels, and how to render each cell using a render method that returns a **ReactNode**.
+If you need to enable Collapse features on your  table, you have to set showOnCollapse to true on  at least one element of the todoCells below.
 Properties that have **showOnCollapse** equal to true will be displayed on the collapse content.
 Check Mui docs for more details https://mui.com/material-ui/react-table/#collapsible-table  
 
@@ -77,7 +90,9 @@ const  todoCells: HeadCell<User>[] = [
 🚨  *Only the properties that are present in headCells config can be shown inside FlexibleMuiTable component*
 
 #### actions (optional)
-Full customizable list of row actions. Here is how you add EDIT/REMOVE actions to a TODO row
+Full customizable list of row actions. Here is how you add EDIT/REMOVE actions to a TODO row by defining
+1. The rendering
+2. The callback for that action event
 
 ```typescript
 import { Action } from  'flexible-mui-table'
@@ -104,17 +119,49 @@ export interface Pagination {
   count:number
 }
 ```
-🚨  *If absent pagination feature is disabled*
+🚨  *If pagination is not present in component props the pagination feature is disabled*
+🚨  *default rowsPerPage values are [5, 15, 25], But it can be changed based on your rowsPerPage value if it not in the default range*
 
-FlexibleMuiTable flow chart:
+#### onSort (callback)
+Get the event when the user clicks on one of the table headers to sort the values
 
-```mermaid
-%%{init: {'theme': 'forest', "flowchart" : { "curve" : "basis" } } }%%
-graph LR
-A{Parent component} -- Items -->B((FlexibleMuiTable))
-A{Parent component} -- HeadCells --> B((FlexibleMuiTable))
-A{Parent component} -- Actions --> B((FlexibleMuiTable))
-A{Parent component} -- Pagination --> B((FlexibleMuiTable))
-B -- onSort Event --> A
-B -- onPageChanged Event --> A
-B -- onRowsPerPageChanged Event --> A
+```jsx
+    import { Order } from  'flexible-mui-table'
+	<FlexibleMuitable<TODO>
+      items={users}
+      pagination={pagination}
+      headCells={userCells}
+      actions={userActions}
+      onSort={(sortBy: string,order: Order) => console.log(`Sorting: ${sortBy}${order}`)}
+    />
+```
+It provides the **sortBy** and the **order**  ('desc' | 'asc')
+
+#### onPageChanged (callback)
+Get the event when the user clicks on next or previous page
+
+```jsx
+	<FlexibleMuitable<TODO>
+      items={users}
+      pagination={pagination}
+      headCells={userCells}
+      actions={userActions}
+      onPageChanged={(page: number) => pageChanged(page)}
+    />
+```
+It provides the **current page** as a number
+
+#### onRowsperPageChanged (callback)
+Get the event when the user change the number of rows per page from the dropdown list
+
+```jsx
+	<FlexibleMuitable<TODO>
+      items={users}
+      pagination={pagination}
+      headCells={userCells} 
+      actions={userActions}
+      onRowsPerPageChanged={(rowsPerPage: number) =>  rowsPerPageChanged(rowsPerPage)}
+    />
+```
+It provides the **rows per page** as a number
+
