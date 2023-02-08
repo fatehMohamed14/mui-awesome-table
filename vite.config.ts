@@ -6,6 +6,9 @@ import dts from 'vite-plugin-dts'
 import EsLint from 'vite-plugin-linter'
 import tsConfigPaths from 'vite-tsconfig-paths'
 const { EsLinter, linterPlugin } = EsLint
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import { terser } from "rollup-plugin-terser";
+
 import * as packageJson from  './package.json'
 // https://vitejs.dev/config/
 export default defineConfig((configEnv) => ({
@@ -28,7 +31,15 @@ export default defineConfig((configEnv) => ({
       fileName: (format) => `flexible-mui-table.${format}.js`,
     },
     rollupOptions: {
-      external: [...Object.keys(packageJson.peerDependencies)],
+      plugins:[
+        peerDepsExternal(),
+        terser(),
+      ],
+      output: {
+        globals: {
+          react: 'react',
+        },
+      },
     },
   },
 }))

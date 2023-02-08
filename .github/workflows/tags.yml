@@ -22,3 +22,4 @@ jobs:
           DEFAULT_BRANCH: main
           RELEASE_BRANCHES: main
           INITIAL_VERSION: 1.0.0
+          DEFAULT_BUMP: none
