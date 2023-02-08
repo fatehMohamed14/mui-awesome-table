@@ -5,7 +5,7 @@ export interface Pagination {
   rowsPerPage: number
   count: number
 }
-export interface FlexibleTableProps<T> {
+export interface AwesomeTableProps<T> {
   items: T[]
   headCells: HeadCell<T>[]
   actions?: Action<T>[]

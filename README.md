@@ -1,4 +1,4 @@
-# flexibleMuiTable
+# MuiAwesomeTable
 
 Full customizable generic MUI table React component
 - 100 % Typescript
@@ -18,18 +18,18 @@ Full customizable generic MUI table React component
 	   status: 'pending' | 'done'
    }
    ...
-   <FlexibleMuiTable<TODO>  ...props />
+   <MuiAwesomeTable<TODO>  ...props />
    ```
 
 ## 🍴 How to use it?
 ### Installation
-`npm install flexible-mui-table`
+`npm install @fatehMoh/mui-awesome-table`
 Or
-`yarn add flexible-mui-table`
+`yarn add @fatehMoh/mui-awesome-table`
 ### Full example
  ```jsx
  // import the component and exported types that you need
- import { FlexibleMuiTable, HeadCell, Action, Order } from  'flexible-mui-table'
+ import { MuiAwesomeTable, HeadCell, Action, Order } from  '@fatehMoh/mui-awesome-table'
  
 export Interface TODO {
    name: string
@@ -91,7 +91,7 @@ const handleRemove = (e: React.MouseEvent<HTMLLIElement, MouseEvent>, todo: TODO
 const handleEdit = (e:  React.MouseEvent<HTMLLIElement, MouseEvent>, todo:  TODO) => console.log('EDIT CALLED ON', todo)
 
   return (
-    <FlexibleMuiTable<TODO>
+    <MuiAwesomeTable<TODO>
 			items={todos}
 			pagination={pagination}
 			headCells={todoCells}
@@ -105,15 +105,15 @@ const handleEdit = (e:  React.MouseEvent<HTMLLIElement, MouseEvent>, todo:  TODO
  
  ``` 
 After installation done, let's start by the props (props and callback props).
-FlexibleMuiTable flow chart:
+MuiAwesomeTable flow chart:
 
 ```mermaid
 %%{init: {'theme': 'forest', "flowchart" : { "curve" : "basis" } } }%%
 graph LR
-A{Parent component} -- Items -->B((FlexibleMuiTable))
-A{Parent component} -- HeadCells --> B((FlexibleMuiTable))
-A{Parent component} -- Actions --> B((FlexibleMuiTable))
-A{Parent component} -- Pagination --> B((FlexibleMuiTable))
+A{Parent component} -- Items -->B((MuiAwesomeTable))
+A{Parent component} -- HeadCells --> B((MuiAwesomeTable))
+A{Parent component} -- Actions --> B((MuiAwesomeTable))
+A{Parent component} -- Pagination --> B((MuiAwesomeTable))
 B -- onSort Event --> A
 B -- onPageChanged Event --> A
 B -- onRowsPerPageChanged Event --> A
@@ -121,7 +121,7 @@ B -- onRowsPerPageChanged Event --> A
 
 Here is the props type of our magic component
 ```typescript
-export interface FlexibleTableProps<T> {
+export interface AwesomeTableProps<T> {
   items: T[]
   headCells: HeadCell<T>[]
   actions?: Action<T>[]
@@ -145,7 +145,7 @@ Check Mui docs for more details https://mui.com/material-ui/react-table/#collaps
 
 For our TODO example, a headCells array that you have to prepare should look like this:
 ```typescript
-import { HeadCell } from  'flexible-mui-table'
+import { HeadCell } from  '@fatehMoh/mui-awesome-table'
 const  todoCells: HeadCell<TODO>[] = [
  {
   id: 'name',
@@ -164,7 +164,7 @@ const  todoCells: HeadCell<TODO>[] = [
  }
 ]
 ```
-🚨  *Only the properties that are present in headCells config can be shown inside FlexibleMuiTable component*
+🚨  *Only the properties that are present in headCells config can be shown inside MuiAwesomeTable component*
 
 #### actions (optional)
 Full customizable list of row actions. Here is how you add EDIT/REMOVE actions to a TODO row by defining
@@ -172,7 +172,7 @@ Full customizable list of row actions. Here is how you add EDIT/REMOVE actions t
 2. The callback for that action event
 
 ```typescript
-import { Action } from  'flexible-mui-table'
+import { Action } from  '@fatehMoh/mui-awesome-table'
 const  todoActions:Action<TODO>[] = [
   {
    id: 'edit',
@@ -203,8 +203,8 @@ export interface Pagination {
 Get the event when the user clicks on one of the table headers to sort the values
 
 ```jsx
-import { Order } from  'flexible-mui-table'
-<FlexibleMuitable<TODO>
+import { Order } from  '@fatehMoh/mui-awesome-table'
+<MuiAwesomeTable<TODO>
   items={todos}
   pagination={pagination}
   headCells={todoCells}
@@ -218,7 +218,7 @@ It provides the **sortBy** and the **order**  ('desc' | 'asc')
 Get the event when the user clicks on next or previous page
 
 ```jsx
-<FlexibleMuitable<TODO>
+<MuiAwesomeTable<TODO>
   items={todos}
   pagination={pagination}
   headCells={todoCells}
@@ -232,7 +232,7 @@ It provides the **current page** as a number
 Get the event when the user change the number of rows per page from the dropdown list
 
 ```jsx
-<FlexibleMuitable<TODO>
+<MuiAwesomeTable<TODO>
   items={todos}
   pagination={pagination}
   headCells={todoCells} 

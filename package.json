@@ -1,7 +1,12 @@
 {
-  "name": "flexible-mui-table",
+  "name": "@fatehMoh/mui-awesome-table",
+  "author": {
+    "name": "Fateh mohamed",
+    "email": "fatehh.mohammed@gmail.com",
+    "url": "https://github.com/fatehMohamed14"
+  },
   "private": false,
-  "version": "1.0.1",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,12 +21,12 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/flexible-mui-table.es.js",
-      "require": "./dist/flexible-mui-table.umd.js"
+      "import": "./dist/mui-awesome-table.es.js",
+      "require": "./dist/mui-awesome-table.umd.js"
     }
   },
-  "main": "./dist/flexible-mui-table.umd.js",
-  "module": "./dist/flexible-mui-table.es.js",
+  "main": "./dist/mui-awesome-table.umd.js",
+  "module": "./dist/mui-awesome-table.es.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -68,7 +73,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fatehMohamed14/flexibleMuiTable"
+    "url": "https://github.com/fatehMohamed14/mui-awesome-table"
   },
   "keywords": [
     "react",
@@ -84,10 +89,9 @@
     "pagination",
     "component"
   ],
-  "author": "fateh mohamed",
   "bugs": {
-    "url": "https://github.com/fatehMohamed14/flexibleMuiTable/issues"
+    "url": "https://github.com/fatehMohamed14/mui-awesome-table/issues"
   },
-  "homepage": "https://github.com/fatehMohamed14/flexibleMuiTable#readme",
+  "homepage": "https://github.com/fatehMohamed14/mui-awesome-table#readme",
   "license": "MIT"
 }

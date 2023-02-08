@@ -19,7 +19,7 @@ import {
 import React, { PropsWithChildren, useMemo, useState } from 'react'
 
 import { EnhancedTableHead } from './EnhancedTableHead'
-import { Action, FlexibleTableProps, HeadCell, Order } from './tableTypes'
+import { Action, AwesomeTableProps, HeadCell, Order } from './tableTypes'
 
 function Row<T>(props: {
   row: T
@@ -163,7 +163,7 @@ function Row<T>(props: {
   )
 }
 
-export const FlexibleMuiTable = <T,>({
+export const MuiAwesomeTable = <T,>({
   items,
   headCells,
   actions,
@@ -171,7 +171,7 @@ export const FlexibleMuiTable = <T,>({
   onPageChanged,
   onRowsPerPageChanged,
   pagination,
-}: PropsWithChildren<FlexibleTableProps<T>>) => {
+}: PropsWithChildren<AwesomeTableProps<T>>) => {
   const [order, setOrder] = useState<Order>('desc')
   const [orderBy, setOrderBy] = useState<keyof T>('createdAt' as keyof T)
   const [defaultRowsPerPageOptions, setDefaultRowsPerPageOptions] = useState([5, 15, 25])
