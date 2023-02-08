@@ -66,21 +66,19 @@ const todoCells:  HeadCell<TODO>[] = [
 const todoActions:Action<TODO>[] = [
 	{
 		id: 'edit',
-		render: (todo:  TODO) => (<MenuItem  id='edit-menu-item'  key={`edit-${todo.name}`} onClick={(e) =>  handleEdit(e, todo)}>
-             <EditIcon/> Edit </MenuItem>),
+		render: (todo:  TODO) => (<MenuItem  id='edit-menu-item'  key={`edit-${todo.name}`} onClick={(e) =>  handleEdit(e, todo)}> <EditIcon/> Edit </MenuItem>)
 	},
 	{
-	id: 'remove',
-	render: (todo:  TODO) => (<MenuItem  id='remove-menu-item'  key=	 {`remove-${todo.id}`} onClick={(e) =>  handleRemove(e, todo)}>
-            <DeleteIcon /> Remove </MenuItem>),
-	},
+	  id: 'remove',
+	  render: (todo:  TODO) => (<MenuItem  id='remove-menu-item'  key=	 {`remove-${todo.id}`} onClick={(e) =>  handleRemove(e, todo)}> <DeleteIcon /> Remove </MenuItem>)
+   },
 ]
 
 // Trigger a new http call based on the following events 
 // [sort, page/rowsPerPage changes, row actions]
 
 const onSortEvent = (sortBy: string, order: Order) => {
-	console.log(`${sortBY}-${order}`)
+	console.log(`${sortBy}-${order}`)
 }
 const pageChanged = (page:  number) => {
 	setPagination({ ...pagination, page })
@@ -92,15 +90,17 @@ const handleRemove = (e: React.MouseEvent<HTMLLIElement, MouseEvent>, todo: TODO
 
 const handleEdit = (e:  React.MouseEvent<HTMLLIElement, MouseEvent>, todo:  TODO) => console.log('EDIT CALLED ON', todo)
 
-  return (<FlexibleMuiTable<TODO>
-			   items={todos}
-			   pagination={pagination}
-			   headCells={todoCells}
-			   actions={todoActions}
-			   onPageChanged={(page: number) => pageChanged(page)}
-			   onRowsPerPageChanged={(rowsPerPage: number) =>  rowsPerPageChanged(rowsPerPage)}
-			   onSort={(sortBy: string,order: Order) => onSortEvent(sortBy, order)}
-		    />)
+  return (
+    <FlexibleMuiTable<TODO>
+			items={todos}
+			pagination={pagination}
+			headCells={todoCells}
+			actions={todoActions}
+			onPageChanged={(page: number) => pageChanged(page)}
+			onRowsPerPageChanged={(rowsPerPage: number) =>  rowsPerPageChanged(rowsPerPage)}
+			onSort={(sortBy: string,order: Order) => onSortEvent(sortBy, order)}
+		/>
+    )
 }
  
  ``` 
@@ -203,14 +203,14 @@ export interface Pagination {
 Get the event when the user clicks on one of the table headers to sort the values
 
 ```jsx
-    import { Order } from  'flexible-mui-table'
-	<FlexibleMuitable<TODO>
-      items={todos}
-      pagination={pagination}
-      headCells={todoCells}
-      actions={todoActions}
-      onSort={(sortBy: string,order: Order) => console.log(`Sorting: ${sortBy}${order}`)}
-    />
+import { Order } from  'flexible-mui-table'
+<FlexibleMuitable<TODO>
+  items={todos}
+  pagination={pagination}
+  headCells={todoCells}
+  actions={todoActions}
+  onSort={(sortBy: string,order: Order) => console.log(`Sorting: ${sortBy}${order}`)}
+/>
 ```
 It provides the **sortBy** and the **order**  ('desc' | 'asc')
 
@@ -218,13 +218,13 @@ It provides the **sortBy** and the **order**  ('desc' | 'asc')
 Get the event when the user clicks on next or previous page
 
 ```jsx
-	<FlexibleMuitable<TODO>
-      items={todos}
-      pagination={pagination}
-      headCells={todoCells}
-      actions={todoActions}
-      onPageChanged={(page: number) => pageChanged(page)}
-    />
+<FlexibleMuitable<TODO>
+  items={todos}
+  pagination={pagination}
+  headCells={todoCells}
+  actions={todoActions}
+  onPageChanged={(page: number) => pageChanged(page)}
+/>
 ```
 It provides the **current page** as a number
 
@@ -232,13 +232,13 @@ It provides the **current page** as a number
 Get the event when the user change the number of rows per page from the dropdown list
 
 ```jsx
-	<FlexibleMuitable<TODO>
-      items={todos}
-      pagination={pagination}
-      headCells={todoCells} 
-      actions={todoActions}
-      onRowsPerPageChanged={(rowsPerPage: number) =>  rowsPerPageChanged(rowsPerPage)}
-    />
+<FlexibleMuitable<TODO>
+  items={todos}
+  pagination={pagination}
+  headCells={todoCells} 
+  actions={todoActions}
+  onRowsPerPageChanged={(rowsPerPage: number) =>  rowsPerPageChanged(rowsPerPage)}
+/>
 ```
 It provides the **rows per page** as a number
 
