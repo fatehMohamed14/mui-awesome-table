@@ -1,5 +1,10 @@
 {
   "name": "@fatehMoh/mui-awesome-table",
+  "author": {
+    "name": "Fateh mohamed",
+    "email": "fatehh.mohammed@gmail.com",
+    "url": "https://github.com/fatehMohamed14"
+  },
   "private": false,
   "version": "1.0.0",
   "type": "module",
@@ -84,11 +89,6 @@
     "pagination",
     "component"
   ],
-  "author": {
-    "name": "Fateh mohamed",
-    "email": "fatehh.mohammed@gmail.com",
-    "url": "https://github.com/fatehMohamed14"
-  },
   "bugs": {
     "url": "https://github.com/fatehMohamed14/mui-awesome-table/issues"
   },
