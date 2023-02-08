@@ -1,9 +1,9 @@
 export { EnhancedTableHead } from './EnhancedTableHead'
-export { FlexibleMuiTable } from './FlexibleMuiTable'
+export { MuiAwesomeTable } from './MuiAwesomeTable'
 export type {
   Action,
+  AwesomeTableProps,
   EnhancedTableProps,
-  FlexibleTableProps,
   HeadCell,
   Order,
   Pagination,

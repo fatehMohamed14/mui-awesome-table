@@ -9,7 +9,6 @@ const { EsLinter, linterPlugin } = EsLint
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import { terser } from "rollup-plugin-terser";
 
-import * as packageJson from  './package.json'
 // https://vitejs.dev/config/
 export default defineConfig((configEnv) => ({
   plugins: [
@@ -26,9 +25,9 @@ export default defineConfig((configEnv) => ({
   build: {
     lib: {
       entry: resolve('src', 'components/index.ts'),
-      name: 'FlexibleMuiTableLibrary',
+      name: '@fatehMoh/mui-awesome-table',
       formats: ['es', 'umd'],
-      fileName: (format) => `flexible-mui-table.${format}.js`,
+      fileName: (format) => `mui-awesome-table.${format}.js`,
     },
     rollupOptions: {
       plugins:[
