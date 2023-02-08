@@ -25,7 +25,7 @@ export default defineConfig((configEnv) => ({
   build: {
     lib: {
       entry: resolve('src', 'components/index.ts'),
-      name: '@fatehMoh/mui-awesome-table',
+      name: '@fatehmoh/mui-awesome-table',
       formats: ['es', 'umd'],
       fileName: (format) => `mui-awesome-table.${format}.js`,
     },

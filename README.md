@@ -23,13 +23,13 @@ Full customizable generic MUI table React component
 
 ## 🍴 How to use it?
 ### Installation
-`npm install @fatehMoh/mui-awesome-table`
+`npm install @fatehmoh/mui-awesome-table`
 Or
-`yarn add @fatehMoh/mui-awesome-table`
+`yarn add @fatehmoh/mui-awesome-table`
 ### Full example
  ```jsx
  // import the component and exported types that you need
- import { MuiAwesomeTable, HeadCell, Action, Order } from  '@fatehMoh/mui-awesome-table'
+ import { MuiAwesomeTable, HeadCell, Action, Order } from  '@fatehmoh/mui-awesome-table'
  
 export Interface TODO {
    name: string
@@ -145,7 +145,7 @@ Check Mui docs for more details https://mui.com/material-ui/react-table/#collaps
 
 For our TODO example, a headCells array that you have to prepare should look like this:
 ```typescript
-import { HeadCell } from  '@fatehMoh/mui-awesome-table'
+import { HeadCell } from  '@fatehmoh/mui-awesome-table'
 const  todoCells: HeadCell<TODO>[] = [
  {
   id: 'name',
@@ -172,7 +172,7 @@ Full customizable list of row actions. Here is how you add EDIT/REMOVE actions t
 2. The callback for that action event
 
 ```typescript
-import { Action } from  '@fatehMoh/mui-awesome-table'
+import { Action } from  '@fatehmoh/mui-awesome-table'
 const  todoActions:Action<TODO>[] = [
   {
    id: 'edit',
@@ -203,7 +203,7 @@ export interface Pagination {
 Get the event when the user clicks on one of the table headers to sort the values
 
 ```jsx
-import { Order } from  '@fatehMoh/mui-awesome-table'
+import { Order } from  '@fatehmoh/mui-awesome-table'
 <MuiAwesomeTable<TODO>
   items={todos}
   pagination={pagination}
