@@ -10,7 +10,10 @@ export interface AwesomeTableProps<T> {
   headCells: HeadCell<T>[]
   actions?: Action<T>[]
   pagination?: Pagination
+  isSearchable?: boolean
   onSort?: (sortBy: keyof T, sortOrder: Order) => void
+  onSearch?: (query: string) => void
+  onCancelSearch?: () => void
   onPageChanged?: (page: number) => void
   onRowsPerPageChanged?: (rowsPerPage: number) => void
 }
