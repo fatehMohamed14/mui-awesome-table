@@ -5,11 +5,11 @@ Full customizable generic MUI table React component
 - Full customization
 - A presentational component
 - Respect of **Open/Closed principles** with a full extensibility
-    1. Add of pagination on demand
+    1. Add of pagination and search on demand
     2. Add of row actions on demand
     3. Add collapse feature to show more details on demand
     4. Smart cells building by passing a render method. Example: *use a chip component for a specific cell*  
-- Support of  **Sorting**, **Pagination**, **Collapsible Table**
+- Support of  **Sorting**, **Pagination**, **Collapsible Table**, **Search**
 - Generic component that allows to pass your data type into your component making it reusable, strongly typed and clean. For instance if you wanna use it for TODO list, here is the clean way
 
    ```jsx
@@ -46,49 +46,55 @@ export const TODOS = () => {
       count: dummy_todos.length,
   })
   
- // Head Cells
-const todoCells:  HeadCell<TODO>[] = [
-	{
-		id: 'name',
-		label: 'Name',
-		render: (value) => value,
-		showOnCollapse: false,
-	},
-	{
-		id: 'status',
-		label: 'Status',
-		render: (value) => (<Chip  color='success'  icon={<PendingIcon/>} label={value} variant='outlined' />),
-		showOnCollapse: false,
-	}
-]
+  // Head Cells
+  const todoCells:  HeadCell<TODO>[] = [
+    {
+      id: 'name',
+      label: 'Name',
+      render: (value) => value,
+      showOnCollapse: false,
+    },
+    {
+      id: 'status',
+      label: 'Status',
+      render: (value) => (<Chip  color='success'  icon={<PendingIcon/>} label={value} variant='outlined' />),
+      showOnCollapse: false,
+    }
+  ]
   
-// Row Actions
-const todoActions:Action<TODO>[] = [
-	{
-		id: 'edit',
-		render: (todo:  TODO) => (<MenuItem  id='edit-menu-item'  key={`edit-${todo.name}`} onClick={(e) =>  handleEdit(e, todo)}> <EditIcon/> Edit </MenuItem>)
-	},
-	{
-	  id: 'remove',
-	  render: (todo:  TODO) => (<MenuItem  id='remove-menu-item'  key=	 {`remove-${todo.id}`} onClick={(e) =>  handleRemove(e, todo)}> <DeleteIcon /> Remove </MenuItem>)
-   },
-]
+  // Row Actions
+  const todoActions:Action<TODO>[] = [
+    {
+      id: 'edit',
+      render: (todo:  TODO) => (<MenuItem  id='edit-menu-item'  key={`edit-${todo.name}`} onClick={(e) =>  handleEdit(e, todo)}> <EditIcon/> Edit </MenuItem>)
+    },
+    {
+      id: 'remove',
+      render: (todo:  TODO) => (<MenuItem  id='remove-menu-item'  key=	 {`remove-${todo.id}`} onClick={(e) =>  handleRemove(e, todo)}> <DeleteIcon /> Remove </MenuItem>)
+    },
+  ]
 
-// Trigger a new http call based on the following events 
-// [sort, page/rowsPerPage changes, row actions]
+  // Trigger a new http call based on the following events 
+  // [sort, page/rowsPerPage changes, row actions]
 
-const onSortEvent = (sortBy: string, order: Order) => {
-	console.log(`${sortBy}-${order}`)
-}
-const pageChanged = (page:  number) => {
-	setPagination({ ...pagination, page })
-}
-const rowsPerPageChanged  = (rowsPerPage:  number) => {
-	setPagination({ ...pagination, rowsPerPage, page: 0 })
-}
-const handleRemove = (e: React.MouseEvent<HTMLLIElement, MouseEvent>, todo: TODO) => console.log('REMOVE CALLED ON', todo)
+  const onSortEvent = (sortBy: string, order: Order) => {
+    console.log(`${sortBy}-${order}`)
+  }
+  const pageChanged = (page:  number) => {
+    setPagination({ ...pagination, page })
+  }
+  const rowsPerPageChanged  = (rowsPerPage:  number) => {
+    setPagination({ ...pagination, rowsPerPage, page: 0 })
+  }
+  const handleRemove = (e: React.MouseEvent<HTMLLIElement, MouseEvent>, todo: TODO) => console.log('REMOVE CALLED ON', todo)
 
-const handleEdit = (e:  React.MouseEvent<HTMLLIElement, MouseEvent>, todo:  TODO) => console.log('EDIT CALLED ON', todo)
+  const handleEdit = (e:  React.MouseEvent<HTMLLIElement, MouseEvent>, todo:  TODO) => console.log('EDIT CALLED ON', todo)
+  const onSearchEvent = (query: string) => {
+		console.log(`Search query : ${query}`)
+	}
+	const onCancelSearchEvent = () => {
+		console.log(`Cancelling search ...`)
+	}
 
   return (
     <MuiAwesomeTable<TODO>
@@ -96,9 +102,12 @@ const handleEdit = (e:  React.MouseEvent<HTMLLIElement, MouseEvent>, todo:  TODO
 			pagination={pagination}
 			headCells={todoCells}
 			actions={todoActions}
+      isSearchable = {true}
 			onPageChanged={(page: number) => pageChanged(page)}
 			onRowsPerPageChanged={(rowsPerPage: number) =>  rowsPerPageChanged(rowsPerPage)}
 			onSort={(sortBy: string,order: Order) => onSortEvent(sortBy, order)}
+      onSearch={(query: string) => onSearchEvent(query)}
+			onCancelSearch={() => onCancelSearchEvent()}
 		/>
     )
 }
@@ -126,9 +135,12 @@ export interface AwesomeTableProps<T> {
   headCells: HeadCell<T>[]
   actions?: Action<T>[]
   pagination?: Pagination
+  isSearchable?: boolean
   onSort?: (sortBy:  keyof  T, sortOrder:  Order) =>  void
   onPageChanged?: (page:  number) =>  void
   onRowsPerPageChanged?: (rowsPerPage:  number) =>  void
+  onSearch?: (query: string) => void
+	onCancelSearch?: () => void
 }
 ```
 
@@ -199,6 +211,9 @@ export interface Pagination {
 🚨  *If pagination is not present in component props the pagination feature is disabled*
 🚨  *default rowsPerPage values are [5, 15, 25], But it can be changed based on your rowsPerPage value if it not in the default range*
 
+#### isSearchable (optional | default false)
+Prop to show or hide the search bar
+
 #### onSort (callback)
 Get the event when the user clicks on one of the table headers to sort the values
 
@@ -241,4 +256,31 @@ Get the event when the user change the number of rows per page from the dropdown
 />
 ```
 It provides the **rows per page** as a number
+
+#### onSearch (callback)
+Return the query as string on search event
+
+```jsx
+<MuiAwesomeTable<TODO>
+  items={todos}
+  pagination={pagination}
+  headCells={todoCells} 
+  actions={todoActions}
+  onSearch={(query: string) => onSearchEvent(query)}
+/>
+```
+
+#### onCancelSearch (callback)
+Event triggered when the user cancel the search operation
+
+```jsx
+<MuiAwesomeTable<TODO>
+  items={todos}
+  pagination={pagination}
+  headCells={todoCells} 
+  actions={todoActions}
+  onCancelSearch={() => onCancelSearchEvent()}
+/>
+```
+
 
