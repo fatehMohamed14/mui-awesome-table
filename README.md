@@ -1,6 +1,6 @@
 # MuiAwesomeTable
 
-Full customizable generic MUI table React component
+Full customizable generic MUI table React component:
 - 100 % Typescript
 - Full customization
 - A presentational component
