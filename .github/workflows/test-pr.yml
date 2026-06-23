@@ -4,6 +4,15 @@ on:
   pull_request:
     types: [opened, edited]
 
+# If the user edits the PR (re-triggering this workflow) while a
+# previous run for the SAME pull request is still in progress, cancel
+# that previous run instead of letting both finish. Runs are grouped
+# by workflow name + PR number, so different PRs never cancel each
+# other - only successive runs on the same PR do.
+concurrency:
+  group: parse-pr-metadata-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   parse-metadata:
     runs-on: ubuntu-latest
