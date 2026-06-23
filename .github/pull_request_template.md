@@ -1,18 +1,12 @@
 ## Metadata
-
-### test_tags
+### test_tags (select one or more)
 - [ ] @smoke
 - [ ] @authentication
 - [ ] @core
-
-### test_type
-- [ ] all
+### test_type (select one or more)
+- [x] all
 - [ ] authentication
 - [ ] dashboard
 - [ ] organizations
 - [ ] incidents
-
-### related_pr_id
-Enter the PR number (example: 123)
-
-<!-- related_pr_id: 0 -->
+### related_pr_id:
