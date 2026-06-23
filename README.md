@@ -3,7 +3,7 @@
 Full customizable generic MUI table React component
 - 100 % Typescript
 - Full customization
-- A presentational component
+- A presentational component.
 - Respect of **Open/Closed principles** with a full extensibility
     1. Add of pagination and search on demand
     2. Add of row actions on demand
