@@ -1,4 +1,4 @@
-# MuiAwesomeTable
+# MuiAwesomeTable Component
 
 Full customizable generic MUI table React component
 - 100 % Typescript
