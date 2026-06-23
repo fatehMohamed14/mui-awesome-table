@@ -14,10 +14,11 @@ jobs:
     steps:
       # Works for BOTH "opened" and "edited" automatically:
       # - on "opened", github.event.pull_request.body is the body as
-      #   first submitted (default checkboxes, unless edited before
-      #   creating).
+      #   first submitted (default checkboxes/values, unless edited
+      #   before creating).
       # - on "edited", github.event.pull_request.body is the NEW body
-      #   after the user's edit (e.g. after they checked a box).
+      #   after the user's edit (e.g. after they checked a box or
+      #   typed a PR number).
       # No branching needed - the payload always reflects the body
       # relevant to whichever event just fired.
       - name: Write PR body to file
@@ -26,18 +27,19 @@ jobs:
         run: |
           printf '%s\n' "$PR_BODY" > pr_body.md
 
-      # Pure awk/grep regex parsing, no external script file, no
-      # extra runtime needed (awk ships with ubuntu-latest by default).
+      # Pure awk/grep regex parsing, no external script file.
       #
-      # Logic:
-      #   1. Isolate everything under "## Metadata" up to the next
-      #      "## " heading (or EOF if none).
-      #   2. Within that block, split into "### <key> (hint)" sections.
-      #   3. For each section, collect labels of lines matching
-      #      "- [x] label" or "* [x] label" (case-insensitive x).
-      #   4. Emit "key|comma,joined,labels" per section, then turn
-      #      each into a GITHUB_OUTPUT entry, slugified to a safe name
-      #      (lowercase, non-alnum -> "_").
+      # Supports two kinds of "### " sections under "## Metadata":
+      #   1. Checkbox sections:
+      #        ### test_type (select one or more)
+      #        - [x] all
+      #        - [ ] authentication
+      #      -> collects comma-joined labels of all "[x]" lines.
+      #   2. Inline free-text fields:
+      #        ### related_pr_id: 123
+      #      -> everything after the first ":" on the heading line
+      #         itself is taken as the literal value. No checkbox
+      #         lines are expected or scanned for this kind of section.
       - name: Parse checklist metadata (regex)
         id: parse
         run: |
@@ -57,10 +59,27 @@ jobs:
               gsub(/^_+|_+$/, "", s)
               return tolower(s)
             }
+            function trim(s) {
+              gsub(/^[[:space:]]+|[[:space:]]+$/, "", s)
+              return s
+            }
             /^###[[:space:]]+/ {
               if (key != "") print key "|" checked
               raw = $0
               sub(/^###[[:space:]]+/, "", raw)
+
+              if (raw ~ /:/) {
+                colon_pos = index(raw, ":")
+                head = substr(raw, 1, colon_pos - 1)
+                val  = substr(raw, colon_pos + 1)
+                key = slugify(head)
+                checked = trim(val)
+                print key "|" checked
+                key = ""
+                checked = ""
+                next
+              }
+
               key = slugify(raw)
               checked = ""
               next
@@ -79,8 +98,6 @@ jobs:
           echo "Parsed sections:"
           echo "$parsed"
 
-          # Write each "key|value" line as a GITHUB_OUTPUT entry, and
-          # also build one combined JSON blob for fromJSON() use.
           json="{"
           first=true
           while IFS='|' read -r key value; do
@@ -92,7 +109,6 @@ jobs:
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
 
-            # Build JSON array from comma-joined value
             IFS=',' read -ra items <<< "$value"
             arr="["
             afirst=true
@@ -118,7 +134,7 @@ jobs:
       # --- Example consumption of the parsed values ---
       # steps.parse.outputs.test_tags        -> comma-joined string, e.g. "@smoke,@authentication"
       # steps.parse.outputs.test_type        -> comma-joined string, e.g. "authentication"
-      # steps.parse.outputs.related_pr_id    -> comma-joined string, e.g. "123 (example)"
+      # steps.parse.outputs.related_pr_id    -> literal typed value, e.g. "123"
       # steps.parse.outputs.metadata_json    -> full JSON blob for fromJSON() use
 
       - name: Show parsed values (debug)
@@ -129,8 +145,8 @@ jobs:
           echo "related_pr_id:   ${{ steps.parse.outputs.related_pr_id }}"
           echo "full json:       ${{ steps.parse.outputs.metadata_json }}"
 
-      # Example: fail loudly if a required field has nothing checked,
-      # instead of silently defaulting. Remove/adjust as needed.
+      # Example: fail loudly if a required field is empty, instead of
+      # silently defaulting. Remove/adjust as needed.
       - name: Validate required fields
         if: steps.parse.outputs.test_type == ''
         run: |
