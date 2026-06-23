@@ -1,0 +1,155 @@
+name: Parse PR Metadata Checklist
+
+on:
+  pull_request:
+    types: [opened, edited]
+
+jobs:
+  parse-metadata:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+
+    steps:
+      # Works for BOTH "opened" and "edited" automatically:
+      # - on "opened", github.event.pull_request.body is the body as
+      #   first submitted (default checkboxes, unless edited before
+      #   creating).
+      # - on "edited", github.event.pull_request.body is the NEW body
+      #   after the user's edit (e.g. after they checked a box).
+      # No branching needed - the payload always reflects the body
+      # relevant to whichever event just fired.
+      - name: Write PR body to file
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          printf '%s\n' "$PR_BODY" > pr_body.md
+
+      # Pure awk/grep regex parsing, no external script file, no
+      # extra runtime needed (awk ships with ubuntu-latest by default).
+      #
+      # Logic:
+      #   1. Isolate everything under "## Metadata" up to the next
+      #      "## " heading (or EOF if none).
+      #   2. Within that block, split into "### <key> (hint)" sections.
+      #   3. For each section, collect labels of lines matching
+      #      "- [x] label" or "* [x] label" (case-insensitive x).
+      #   4. Emit "key|comma,joined,labels" per section, then turn
+      #      each into a GITHUB_OUTPUT entry, slugified to a safe name
+      #      (lowercase, non-alnum -> "_").
+      - name: Parse checklist metadata (regex)
+        id: parse
+        run: |
+          scoped="$(awk '
+            BEGIN { in_section = 0; found = 0 }
+            /^##[[:space:]]+Metadata[[:space:]]*$/ { in_section = 1; found = 1; next }
+            in_section && /^##[[:space:]]+/ { in_section = 0 }
+            in_section { print }
+            END { if (!found) exit 1 }
+          ' pr_body.md 2>/dev/null || cat pr_body.md)"
+
+          parsed="$(echo "$scoped" | awk '
+            function slugify(s) {
+              gsub(/\([^)]*\)[[:space:]]*$/, "", s)
+              gsub(/^[[:space:]]+|[[:space:]]+$/, "", s)
+              gsub(/[^A-Za-z0-9]+/, "_", s)
+              gsub(/^_+|_+$/, "", s)
+              return tolower(s)
+            }
+            /^###[[:space:]]+/ {
+              if (key != "") print key "|" checked
+              raw = $0
+              sub(/^###[[:space:]]+/, "", raw)
+              key = slugify(raw)
+              checked = ""
+              next
+            }
+            /^[-*][[:space:]]+\[[xX]\][[:space:]]+/ {
+              label = $0
+              sub(/^[-*][[:space:]]+\[[xX]\][[:space:]]+/, "", label)
+              gsub(/[[:space:]]+$/, "", label)
+              checked = (checked == "" ? label : checked "," label)
+            }
+            END {
+              if (key != "") print key "|" checked
+            }
+          ')"
+
+          echo "Parsed sections:"
+          echo "$parsed"
+
+          # Write each "key|value" line as a GITHUB_OUTPUT entry, and
+          # also build one combined JSON blob for fromJSON() use.
+          json="{"
+          first=true
+          while IFS='|' read -r key value; do
+            [ -z "$key" ] && continue
+
+            {
+              echo "${key}<<EOF"
+              echo "$value"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+
+            # Build JSON array from comma-joined value
+            IFS=',' read -ra items <<< "$value"
+            arr="["
+            afirst=true
+            for item in "${items[@]}"; do
+              [ -z "$item" ] && continue
+              if [ "$afirst" = true ]; then afirst=false; else arr="$arr,"; fi
+              esc="${item//\"/\\\"}"
+              arr="$arr\"$esc\""
+            done
+            arr="$arr]"
+
+            if [ "$first" = true ]; then first=false; else json="$json,"; fi
+            json="$json\"$key\":$arr"
+          done <<< "$parsed"
+          json="$json}"
+
+          {
+            echo "metadata_json<<EOF"
+            echo "$json"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      # --- Example consumption of the parsed values ---
+      # steps.parse.outputs.test_tags        -> comma-joined string, e.g. "@smoke,@authentication"
+      # steps.parse.outputs.test_type        -> comma-joined string, e.g. "authentication"
+      # steps.parse.outputs.related_pr_id    -> comma-joined string, e.g. "123 (example)"
+      # steps.parse.outputs.metadata_json    -> full JSON blob for fromJSON() use
+
+      - name: Show parsed values (debug)
+        run: |
+          echo "event:           ${{ github.event.action }}"
+          echo "test_tags:       ${{ steps.parse.outputs.test_tags }}"
+          echo "test_type:       ${{ steps.parse.outputs.test_type }}"
+          echo "related_pr_id:   ${{ steps.parse.outputs.related_pr_id }}"
+          echo "full json:       ${{ steps.parse.outputs.metadata_json }}"
+
+      # Example: fail loudly if a required field has nothing checked,
+      # instead of silently defaulting. Remove/adjust as needed.
+      - name: Validate required fields
+        if: steps.parse.outputs.test_type == ''
+        run: |
+          echo "::error::No 'test_type' checkbox is selected in the PR description. Please check at least one option under '### test_type'."
+          exit 1
+
+    outputs:
+      test_tags: ${{ steps.parse.outputs.test_tags }}
+      test_type: ${{ steps.parse.outputs.test_type }}
+      related_pr_id: ${{ steps.parse.outputs.related_pr_id }}
+      metadata_json: ${{ steps.parse.outputs.metadata_json }}
+
+  # Example downstream job consuming the parsed metadata
+  run-tests:
+    needs: parse-metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use parsed metadata
+        run: |
+          echo "Will run with test_type=${{ needs.parse-metadata.outputs.test_type }}"
+          echo "Tags selected: ${{ needs.parse-metadata.outputs.test_tags }}"
+          echo "Related PR id: ${{ needs.parse-metadata.outputs.related_pr_id }}"
